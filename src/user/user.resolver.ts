@@ -35,7 +35,10 @@ export class UserResolver {
 
   @Mutation((returns) => Boolean)
   async removeUser(@Args('id') id: string) {
-    return this.userService.remove(id);
+    return this.userService
+      .remove(id)
+      .then(() => true)
+      .catch(() => false);
   }
 
   @Subscription((returns) => User)

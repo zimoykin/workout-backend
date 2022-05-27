@@ -3,16 +3,16 @@ import { IsEmail, Length, MaxLength } from 'class-validator';
 
 @InputType()
 export class UserInput {
-  @Field()
+  @Field({ nullable: false })
   @MaxLength(30)
   firstName: string;
 
-  @Field()
+  @Field({ nullable: false })
   @MaxLength(30)
-  LastName: string;
+  lastName: string;
 
   @Field({ nullable: false })
   @Length(6, 255)
   @IsEmail()
-  email?: string;
+  email: string;
 }

@@ -6,11 +6,11 @@ directive @upper on FIELD_DEFINITION
 
 """user"""
 type User {
-  id: ID!
+  _id: String!
   firstName: String!
   lastName: String!
   email: String!
-  creationDate: Date!
+  createdAt: Date!
 }
 
 """Date custom scalar type"""
@@ -28,7 +28,7 @@ type Mutation {
 
 input UserInput {
   firstName: String!
-  LastName: String!
+  lastName: String!
   email: String!
 }
 
