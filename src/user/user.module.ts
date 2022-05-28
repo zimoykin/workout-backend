@@ -1,9 +1,15 @@
 import { Module } from '@nestjs/common';
-import { DateScalar } from 'src/shared/scalar';
+import { ConfigModule } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { AuthService } from '../auth/auth.service';
+import { DateScalar } from '../shared/scalar';
 import { UserResolver } from './user.resolver';
 import { UserService } from './user.service';
 
 @Module({
-  providers: [UserResolver, UserService, DateScalar],
+  imports: [
+    ConfigModule.forRoot()
+  ],
+  providers: [UserResolver, UserService, DateScalar, AuthService, JwtService],
 })
 export class UserModule {}

@@ -1,17 +1,17 @@
-import { NotFoundException } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
-import { PubSub } from 'graphql-subscriptions';
-import { UserArgs } from './dto/args';
+import { NotFoundException, UseGuards } from '@nestjs/common';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { AuthGuard } from '../shared/security/jwt.guard';
+import { AdminGuard } from '../shared/security/role.guard';
+import { QueryArgs } from './dto/args';
 import { UserInput } from './dto/input';
 import { User } from './models/user.model';
 import { UserService } from './user.service';
-
-const pubSub = new PubSub();
 
 @Resolver((of) => User)
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
+  @UseGuards(AdminGuard)
   @Query((returns) => User)
   async user(@Args('id') id: string): Promise<User> {
     const user = await this.userService.findOneById(id);
@@ -21,28 +21,29 @@ export class UserResolver {
     return user;
   }
 
+  @UseGuards(AdminGuard)
   @Query((returns) => [User])
-  users(@Args() userArgs: UserArgs): Promise<User[]> {
-    return this.userService.findAll(userArgs);
+  users(
+    @Args() args: QueryArgs,
+    @Args('firstName', { nullable: true }) firstName?: string,
+    @Args('lastName', { nullable: true }) lastName?: string,
+  ): Promise<User[]> {
+    return this.userService.findAll({ firstName, lastName }, args);
   }
 
+  @UseGuards(AdminGuard)
   @Mutation((returns) => User)
   async addUser(@Args('newUserData') newUser: UserInput): Promise<User> {
     const user = await this.userService.create(newUser);
-    pubSub.publish('userAdded', { userAdded: user });
     return user;
   }
 
+  @UseGuards(AdminGuard)
   @Mutation((returns) => Boolean)
   async removeUser(@Args('id') id: string) {
     return this.userService
       .remove(id)
       .then(() => true)
       .catch(() => false);
-  }
-
-  @Subscription((returns) => User)
-  userAdded() {
-    return pubSub.asyncIterator('userAdded');
   }
 }

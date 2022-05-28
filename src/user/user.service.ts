@@ -1,12 +1,6 @@
-import {
-  HttpException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
-import { ObjectId } from 'mongodb';
-import { Mongo } from 'src/shared/database';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Repository } from 'src/shared/database/repository';
-import { UserArgs } from './dto/args';
+import { QueryArgs } from './dto/args';
 import { UserInput } from './dto/input';
 import { User } from './models/user.model';
 
@@ -18,19 +12,20 @@ export class UserService {
   }
 
   async create(data: UserInput): Promise<User> {
-    const user = new User();
-    Object.assign(user, data);
-    const created = await this.repo.create(user);
+    const created = await this.repo.create(User.fromInput(data));
     if (created) return created;
-    else throw InternalServerErrorException;
+    else throw new InternalServerErrorException();
   }
 
   async findOneById(id: string): Promise<User> {
     return this.repo.find(id);
   }
 
-  async findAll(recipesArgs: UserArgs): Promise<User[]> {
-    return [] as User[];
+  async findAll(
+    query?: Partial<User>,
+    recipesArgs?: QueryArgs,
+  ): Promise<User[]> {
+    return this.repo.findAll(query);
   }
 
   async remove(id: string): Promise<{ status: string }> {

@@ -5,15 +5,17 @@ import { UserModule } from './user/user.module';
 import { DirectiveLocation, GraphQLDirective } from 'graphql';
 import { upperDirectiveTransformer } from './shared/upper-case.directive';
 import { ConfigModule } from '@nestjs/config';
+import { WorkoutModule } from './workout/workout.module';
+import { JwtModule } from '@nestjs/jwt';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
-    UserModule,
+    ConfigModule.forRoot(),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'schema.gql',
       transformSchema: (schema) => upperDirectiveTransformer(schema, 'upper'),
-      installSubscriptionHandlers: true,
       buildSchemaOptions: {
         directives: [
           new GraphQLDirective({
@@ -23,7 +25,12 @@ import { ConfigModule } from '@nestjs/config';
         ],
       },
     }),
-    ConfigModule.forRoot(),
+    JwtModule,
+    WorkoutModule,
+    AuthModule,
+    UserModule,
   ],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

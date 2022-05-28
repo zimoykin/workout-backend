@@ -10,28 +10,71 @@ type User {
   firstName: String!
   lastName: String!
   email: String!
+  role: String!
   createdAt: Date!
 }
 
 """Date custom scalar type"""
 scalar Date
 
+"""workout"""
+type Workout {
+  _id: String!
+  workoutType: String!
+  start: Date!
+  end: Date!
+  bpm: Float!
+  createdAt: Date!
+  userId: String!
+}
+
+type IStatusResponse {
+  status: String!
+}
+
+type ITokens {
+  accessToken: String!
+  refreshToken: String!
+}
+
 type Query {
+  workout(id: String!): Workout!
+  workouts(skip: Int = 0, take: Int = 25): [Workout!]!
   user(id: String!): User!
-  users(skip: Int = 0, take: Int = 25): [User!]!
+  users(skip: Int = 0, take: Int = 25, firstName: String, lastName: String): [User!]!
 }
 
 type Mutation {
+  addWorkout(input: WorkoutInput!): Workout!
+  removeWorkout(id: String!): Boolean!
+  login(loginArgs: LoginInput!): ITokens!
+  register(registerArgs: RegisterInput!): IStatusResponse!
   addUser(newUserData: UserInput!): User!
   removeUser(id: String!): Boolean!
+}
+
+input WorkoutInput {
+  workoutType: String!
+  start: String!
+  end: String!
+  bpm: Float!
+  userId: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+input RegisterInput {
+  email: String!
+  password: String!
+  firstName: String!
+  lastName: String!
 }
 
 input UserInput {
   firstName: String!
   lastName: String!
   email: String!
-}
-
-type Subscription {
-  userAdded: User!
 }
