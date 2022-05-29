@@ -1,7 +1,8 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Repository } from 'src/shared/database/repository';
 import { QueryArgs } from './dto/args';
-import { UserInput } from './dto/input';
+import { UserInput } from './dto/input.dto';
+import { UserUpdate } from './dto/update.dto';
 import { User } from './models/user.model';
 
 @Injectable()
@@ -11,8 +12,14 @@ export class UserService {
     this.repo = new Repository(User);
   }
 
-  async create(data: UserInput): Promise<User> {
-    const created = await this.repo.create(User.fromInput(data));
+  async update(id: string, data: UserUpdate): Promise<User> {
+    const created = await this.repo.update(id, data);
+    if (created) return created;
+    else throw new InternalServerErrorException();
+  }
+
+  async create(input: UserInput): Promise<User> {
+    const created = await this.repo.create(User.fromInput(input));
     if (created) return created;
     else throw new InternalServerErrorException();
   }

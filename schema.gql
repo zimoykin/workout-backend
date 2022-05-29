@@ -49,7 +49,7 @@ type Mutation {
   removeWorkout(id: String!): Boolean!
   login(loginArgs: LoginInput!): ITokens!
   register(registerArgs: RegisterInput!): IStatusResponse!
-  addUser(newUserData: UserInput!): User!
+  updateUser(id: String!, userUpdate: UserUpdate!): User!
   removeUser(id: String!): Boolean!
 }
 
@@ -71,10 +71,11 @@ input RegisterInput {
   password: String!
   firstName: String!
   lastName: String!
+  role: String!
 }
 
-input UserInput {
-  firstName: String!
-  lastName: String!
-  email: String!
+input UserUpdate {
+  firstName: String
+  lastName: String
+  role: String
 }

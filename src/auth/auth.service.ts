@@ -7,18 +7,17 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { Auth } from './models/auth.model';
 import { Repository } from '../shared/database/repository';
-import { LoginInput, RegisterInput } from './dto/args.dto';
+import { RegisterInput } from './dto/register.dto';
 import { User } from '../user/models/user.model';
 import { UserService } from '../user/user.service';
-import { ConfigService } from '@nestjs/config';
+import { LoginInput } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
   repo: Repository<Auth>;
   constructor(
     private readonly jwtService: JwtService,
-    private readonly userService: UserService,
-    private readonly configService: ConfigService,
+    private readonly userService: UserService
   ) {
     this.repo = new Repository(Auth);
   }

@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { UserRole } from 'src/shared/dto/userRole.dto';
 import { Model } from '../../shared/database/model';
-import { UserInput } from '../dto/input';
+import { UserRole } from '../../shared/dto/userRole.dto';
+import { UserInput } from '../dto/input.dto';
 
 @ObjectType({ description: 'user' })
 export class User extends Model {
@@ -34,7 +34,7 @@ export class User extends Model {
     user.email = 'test@test.test';
     user.firstName = 'John';
     user.lastName = 'Doe';
-    user.role = 'user';
+    user.role = UserRole.user;
 
     return user;
   }

@@ -1,4 +1,7 @@
-import { InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { Collection, ObjectId } from 'mongodb';
 import { Mongo } from '.';
 import { Model } from './model';
@@ -21,8 +24,8 @@ export class Repository<T extends Model> {
     return model;
   }
 
-  async findAll(_query?: Partial<T>): Promise<T[]> {
-    const result = await this.collection.find().toArray();
+  async findAll(query?: Partial<T>): Promise<T[]> {
+    const result = await this.collection.find(query).toArray();
     const models = result.map((val) => {
       return Model.fromData(this.type, val);
     });
@@ -37,8 +40,14 @@ export class Repository<T extends Model> {
     } else throw InternalServerErrorException;
   }
 
-  update(id: string, update: Partial<T>): Promise<T> {
-    return {} as any;
+  async update(id: string, update: Partial<T>): Promise<T> {
+    const upd = await this.collection.findOneAndUpdate(
+      { _id: new ObjectId(id) },
+      { $set: update },
+    );
+    if (upd.ok) {
+      return this.find(id);
+    } else throw new BadRequestException();
   }
   async remove(id: string) {
     const result = await this.collection.findOneAndDelete({

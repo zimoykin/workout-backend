@@ -4,9 +4,7 @@ import { AuthService } from '../../auth/auth.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(
-      private readonly service: AuthService
-  ) {}
+  constructor(private readonly service: AuthService) {}
   getRequest(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context);
     return ctx.getContext().req;

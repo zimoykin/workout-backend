@@ -2,7 +2,8 @@ import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { ApiTags } from '@nestjs/swagger';
 import { IStatusResponse } from 'src/shared/dto/status.dto';
 import { AuthService } from './auth.service';
-import { LoginInput, RegisterInput } from './dto/args.dto';
+import { LoginInput } from './dto/login.dto';
+import { RegisterInput } from './dto/register.dto';
 import { ITokens } from './dto/tokens.dto';
 
 @Resolver()

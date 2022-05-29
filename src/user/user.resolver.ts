@@ -3,7 +3,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthGuard } from '../shared/security/jwt.guard';
 import { AdminGuard } from '../shared/security/role.guard';
 import { QueryArgs } from './dto/args';
-import { UserInput } from './dto/input';
+import { UserUpdate } from './dto/update.dto';
 import { User } from './models/user.model';
 import { UserService } from './user.service';
 
@@ -28,13 +28,19 @@ export class UserResolver {
     @Args('firstName', { nullable: true }) firstName?: string,
     @Args('lastName', { nullable: true }) lastName?: string,
   ): Promise<User[]> {
-    return this.userService.findAll({ firstName, lastName }, args);
+    const filter = {} as Partial<User>;
+    if (firstName) filter.firstName = firstName;
+    if (lastName) filter.lastName = lastName;
+    return this.userService.findAll(filter, args);
   }
 
   @UseGuards(AdminGuard)
   @Mutation((returns) => User)
-  async addUser(@Args('newUserData') newUser: UserInput): Promise<User> {
-    const user = await this.userService.create(newUser);
+  async updateUser(
+    @Args('id', { nullable: false }) id: string,
+    @Args('userUpdate') update: UserUpdate,
+  ): Promise<User> {
+    const user = await this.userService.update(id, update);
     return user;
   }
 
