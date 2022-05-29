@@ -1,12 +1,12 @@
 import { NotFoundException, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { User } from '../user/models/user.model';
-import { CurrentUser } from '../shared/currentUser';
-import { AuthGuard } from '../shared/security/jwt.guard';
+import { AuthUser } from '../../shared/decorators/user.decorator';
+import { AuthGuard } from '../../shared/security/jwt.guard';
 import { WOArgs } from './dto/args';
 import { WorkoutInput } from './dto/input';
 import { Workout as Model } from './models/workout.model';
 import { WorkoutService } from './workout.service';
+import { IAuthorizedUser } from '../../shared/dto/auth.interface';
 
 @Resolver((of) => Model)
 export class WorkoutResolver {
@@ -31,10 +31,10 @@ export class WorkoutResolver {
   @UseGuards(AuthGuard)
   @Mutation((returns) => Model)
   async addWorkout(
-    @CurrentUser() auth: User,
+    @AuthUser() auth: IAuthorizedUser,
     @Args('input') input: WorkoutInput,
   ): Promise<Model> {
-    const user = await this.woService.create(input);
+    const user = await this.woService.create({ userId: auth.id, ...input });
     return user;
   }
   @UseGuards(AuthGuard)

@@ -6,7 +6,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { UserRole } from '../../shared/dto/userRole.dto';
+import { UserRole } from '../../../shared/dto/userRole.dto';
 
 
 @InputType()

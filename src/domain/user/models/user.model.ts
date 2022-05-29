@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Model } from '../../shared/database/model';
-import { UserRole } from '../../shared/dto/userRole.dto';
+import { Model } from '../../../shared/database/model';
+import { UserRole } from '../../../shared/dto/userRole.dto';
 import { UserInput } from '../dto/input.dto';
 
 @ObjectType({ description: 'user' })
@@ -31,6 +31,7 @@ export class User extends Model {
 
   static get mock(): User {
     const user = new User();
+    user._id = '62931de7588054c76b628d2b';
     user.email = 'test@test.test';
     user.firstName = 'John';
     user.lastName = 'Doe';

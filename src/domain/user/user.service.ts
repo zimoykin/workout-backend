@@ -1,6 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { Repository } from 'src/shared/database/repository';
-import { QueryArgs } from './dto/args';
+import { Repository } from '../../shared/database/repository';
 import { UserInput } from './dto/input.dto';
 import { UserUpdate } from './dto/update.dto';
 import { User } from './models/user.model';
@@ -29,8 +28,7 @@ export class UserService {
   }
 
   async findAll(
-    query?: Partial<User>,
-    recipesArgs?: QueryArgs,
+    query?: Partial<User>
   ): Promise<User[]> {
     return this.repo.findAll(query);
   }

@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { IWorkoutType } from '../../shared/types';
-import { Model } from '../../shared/database/model';
+import { IWorkoutType } from '../../../shared/types';
+import { Model } from '../../../shared/database/model';
 import { User } from '../../user/models/user.model';
 
 @ObjectType({ description: 'workout' })

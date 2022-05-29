@@ -6,18 +6,19 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Auth } from './models/auth.model';
-import { Repository } from '../shared/database/repository';
+import { Repository } from '../../shared/database/repository';
 import { RegisterInput } from './dto/register.dto';
 import { User } from '../user/models/user.model';
 import { UserService } from '../user/user.service';
 import { LoginInput } from './dto/login.dto';
+import { ITokens } from './dto/tokens.dto';
 
 @Injectable()
 export class AuthService {
   repo: Repository<Auth>;
   constructor(
     private readonly jwtService: JwtService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
   ) {
     this.repo = new Repository(Auth);
   }
@@ -31,7 +32,7 @@ export class AuthService {
     return null;
   }
 
-  async login(input: LoginInput) {
+  async login(input: LoginInput): Promise<ITokens> {
     const users = await this.userService.findAll({ email: input.email });
     if (users.length) {
       const logins = await this.repo.findAll({ userId: users[0]._id });
@@ -69,6 +70,31 @@ export class AuthService {
     } else throw new ConflictException();
   }
 
+  async refresh(token: string): Promise<ITokens> {
+    const tokenData = await this.jwtService.verifyAsync(token, {
+      secret: process.env.JWT_SECRET,
+    });
+
+    const usr = await this.userService.findOneById(tokenData.id);
+
+    const payload = {
+      email: usr.email,
+      id: usr._id,
+      role: usr.role,
+    };
+
+    return {
+      accessToken: this.jwtService.sign(payload, {
+        expiresIn: process.env.MODE === 'DEV' ? '30m' : '5m',
+        secret: process.env.JWT_SECRET,
+      }),
+      refreshToken: this.jwtService.sign(payload, {
+        expiresIn: '7d',
+        secret: process.env.JWT_SECRET,
+      }),
+    };
+  }
+
   async findByEmail(email: string): Promise<Auth> {
     const usr = await this.userService.findAll({ email });
     if (usr) {
@@ -79,11 +105,19 @@ export class AuthService {
     } else throw new NotFoundException();
   }
 
-  async verify(token: string): Promise<any> {
+  async verifyUser(token: string): Promise<User> {
     const payload = await this.jwtService.verifyAsync(token, {
       secret: process.env.JWT_SECRET,
     });
-    if (payload) return payload;
+    if (payload) return await this.userService.findOneById(payload.id);
+    else throw new BadRequestException();
+  }
+
+  async verify(token: string): Promise<[string, string]> {
+    const payload = await this.jwtService.verifyAsync(token, {
+      secret: process.env.JWT_SECRET,
+    });
+    if (payload) return [payload.id, payload.role];
     else throw new BadRequestException();
   }
 }

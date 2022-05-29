@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { WorkoutService } from './workout.service';
 import { WorkoutResolver } from './workout.resolver';
-import { DateScalar } from '../shared/scalar';
+import { DateScalar } from '../../shared/scalar';
 import { AuthService } from '../auth/auth.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';

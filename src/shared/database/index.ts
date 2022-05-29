@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { EventEmitter } from 'events';
 import { MongoClient } from 'mongodb';
-import { User } from '../../user/models/user.model';
+import { User } from '../../domain/user/models/user.model';
 
 const getClient = () => {
   const dbUrl = process.env.DATABASE_URL as string;

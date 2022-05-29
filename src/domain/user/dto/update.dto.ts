@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { IsEnum, isValidationOptions, Length, MaxLength } from 'class-validator';
-import { UserRole } from '../../shared/dto/userRole.dto';
+import { UserRole } from '../../../shared/dto/userRole.dto';
 
 @InputType()
 export class UserUpdate {

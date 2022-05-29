@@ -1,8 +1,7 @@
 import { NotFoundException, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { AuthGuard } from '../shared/security/jwt.guard';
-import { AdminGuard } from '../shared/security/role.guard';
-import { QueryArgs } from './dto/args';
+import { AuthUser } from '../../shared/decorators/user.decorator';
+import { AdminGuard } from '../../shared/security/admin.guard';
 import { UserUpdate } from './dto/update.dto';
 import { User } from './models/user.model';
 import { UserService } from './user.service';
@@ -24,21 +23,20 @@ export class UserResolver {
   @UseGuards(AdminGuard)
   @Query((returns) => [User])
   users(
-    @Args() args: QueryArgs,
     @Args('firstName', { nullable: true }) firstName?: string,
     @Args('lastName', { nullable: true }) lastName?: string,
   ): Promise<User[]> {
     const filter = {} as Partial<User>;
     if (firstName) filter.firstName = firstName;
     if (lastName) filter.lastName = lastName;
-    return this.userService.findAll(filter, args);
+    return this.userService.findAll(filter);
   }
 
   @UseGuards(AdminGuard)
   @Mutation((returns) => User)
   async updateUser(
     @Args('id', { nullable: false }) id: string,
-    @Args('userUpdate') update: UserUpdate,
+    @Args('userUpdate', { nullable: false }) update: UserUpdate,
   ): Promise<User> {
     const user = await this.userService.update(id, update);
     return user;
@@ -46,7 +44,8 @@ export class UserResolver {
 
   @UseGuards(AdminGuard)
   @Mutation((returns) => Boolean)
-  async removeUser(@Args('id') id: string) {
+  async removeUser(@AuthUser() user: User, @Args('id') id: string) {
+    console.log(user);
     return this.userService
       .remove(id)
       .then(() => true)

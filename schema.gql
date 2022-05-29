@@ -41,14 +41,15 @@ type Query {
   workout(id: String!): Workout!
   workouts(skip: Int = 0, take: Int = 25): [Workout!]!
   user(id: String!): User!
-  users(skip: Int = 0, take: Int = 25, firstName: String, lastName: String): [User!]!
+  users(firstName: String, lastName: String): [User!]!
 }
 
 type Mutation {
   addWorkout(input: WorkoutInput!): Workout!
   removeWorkout(id: String!): Boolean!
-  login(loginArgs: LoginInput!): ITokens!
   register(registerArgs: RegisterInput!): IStatusResponse!
+  login(loginArgs: LoginInput!): ITokens!
+  refresh(refreshToken: String!): ITokens!
   updateUser(id: String!, userUpdate: UserUpdate!): User!
   removeUser(id: String!): Boolean!
 }
@@ -61,17 +62,17 @@ input WorkoutInput {
   userId: String!
 }
 
-input LoginInput {
-  email: String!
-  password: String!
-}
-
 input RegisterInput {
   email: String!
   password: String!
   firstName: String!
   lastName: String!
   role: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
 }
 
 input UserUpdate {

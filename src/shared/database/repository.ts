@@ -1,60 +1,36 @@
-import {
-  BadRequestException,
-  InternalServerErrorException,
-} from '@nestjs/common';
-import { Collection, ObjectId } from 'mongodb';
+import { Collection } from 'mongodb';
 import { Mongo } from '.';
+import { create } from './methods/create';
+import { find as findM } from './methods/find';
+import { findAll } from './methods/findAll';
+import { remove } from './methods/remove';
+import { update } from './methods/update';
 import { Model } from './model';
 
-export class Repository<T extends Model> {
-  type: new () => T;
+type ModelClass<T extends Model> = new () => T;
 
-  constructor(type: new () => T) {
+export class Repository<T extends Model> {
+  type: ModelClass<T>;
+
+  constructor(type: ModelClass<T>) {
     this.type = type;
   }
 
-  private get collection(): Collection {
+  get collection(): Collection {
     const client = Mongo.getInstance();
     return client.database.db().collection(this.type.name.toLowerCase());
   }
 
-  async find(id: string): Promise<T> {
-    const result = await this.collection.findOne({ _id: new ObjectId(id) });
-    const model = Model.fromData(this.type, result);
-    return model;
-  }
+  find = async (id: string): Promise<T> => findM.bind(this)(id);
 
-  async findAll(query?: Partial<T>): Promise<T[]> {
-    const result = await this.collection.find(query).toArray();
-    const models = result.map((val) => {
-      return Model.fromData(this.type, val);
-    });
-    return models;
-  }
+  findAll = async (query?: Partial<T>): Promise<T[]> =>
+    findAll.bind(this)(query);
 
-  async create(input: T): Promise<T> {
-    const result = await this.collection.insertOne(input);
-    if (result.acknowledged) {
-      const model = await this.find(result.insertedId.toString());
-      return model;
-    } else throw InternalServerErrorException;
-  }
+  create = async (input: T): Promise<T> => create.bind(this)(input);
 
-  async update(id: string, update: Partial<T>): Promise<T> {
-    const upd = await this.collection.findOneAndUpdate(
-      { _id: new ObjectId(id) },
-      { $set: update },
-    );
-    if (upd.ok) {
-      return this.find(id);
-    } else throw new BadRequestException();
-  }
-  async remove(id: string) {
-    const result = await this.collection.findOneAndDelete({
-      _id: new ObjectId(id),
-    });
-    if (result.ok) {
-      return { status: 'deleted' };
-    } else throw InternalServerErrorException;
-  }
+  update = async (id: string, upd: Partial<T>): Promise<T> =>
+    update.bind(this)(id, upd);
+
+  remove = async (id: string): Promise<{ status: string }> =>
+    remove.bind(this)(id);
 }
