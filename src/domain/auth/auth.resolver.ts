@@ -1,5 +1,5 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
-import { IStatusResponse } from 'src/shared/dto/status.dto';
+import { IStatusResponse } from '../../shared/dto/status.dto';
 import { AuthService } from './auth.service';
 import { LoginInput } from './dto/login.dto';
 import { RegisterInput } from './dto/register.dto';

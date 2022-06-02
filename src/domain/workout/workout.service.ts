@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'src/shared/database/repository';
-import { WOArgs } from './dto/args';
+import { Repository } from '../../shared/database/repository';
+import { WOQuery } from './dto/query';
 import { WorkoutInput } from './dto/input';
 import { Workout } from './models/workout.model';
 
@@ -15,8 +15,8 @@ export class WorkoutService {
   async findOneById(id: string) {
     return this.repo.find(id);
   }
-  async findAll(query: WOArgs) {
-    return this.repo.findAll();
+  async findAll(query: WOQuery) {
+    return this.repo.findAll(query);
   }
   async create(input: WorkoutInput) {
     const model = new Workout();

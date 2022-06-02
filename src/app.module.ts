@@ -8,9 +8,21 @@ import { ConfigModule } from '@nestjs/config';
 import { WorkoutModule } from './domain/workout/workout.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './domain/auth/auth.module';
+import { AwardModule } from './domain/award/award.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 const imports = [
   ConfigModule.forRoot(),
+  TypeOrmModule.forRoot({
+    type: 'mysql',
+    host: process.env.MODE === 'DEV' ? 'localhost' : 'db',
+    port: 3306,
+    username: 'user',
+    password: 'password',
+    database: 'workout_db',
+    entities: [],
+    synchronize: true,
+  }),
   GraphQLModule.forRoot<ApolloDriverConfig>({
     driver: ApolloDriver,
     autoSchemaFile: 'schema.gql',
@@ -24,11 +36,11 @@ const imports = [
       ],
     },
   }),
-  JwtModule
+  JwtModule,
 ];
 
 @Module({
-  imports: [...imports, WorkoutModule, AuthModule, UserModule],
+  imports: [...imports, WorkoutModule, AuthModule, UserModule, AwardModule],
   controllers: [],
   providers: [],
 })

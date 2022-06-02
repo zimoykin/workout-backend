@@ -6,7 +6,7 @@ directive @upper on FIELD_DEFINITION
 
 """user"""
 type User {
-  _id: String!
+  id: String!
   firstName: String!
   lastName: String!
   email: String!
@@ -25,7 +25,7 @@ type Workout {
   end: Date!
   bpm: Float!
   createdAt: Date!
-  userId: String!
+  user: User!
 }
 
 type IStatusResponse {
@@ -37,11 +37,25 @@ type ITokens {
   refreshToken: String!
 }
 
+type Award {
+  id: String!
+  score: Float!
+  awardType: String!
+  user: User!
+}
+
 type Query {
   workout(id: String!): Workout!
-  workouts(skip: Int = 0, take: Int = 25): [Workout!]!
+  workouts(userId: String!, bpm: Float!): [Workout!]!
   user(id: String!): User!
   users(firstName: String, lastName: String): [User!]!
+  awards(args: AwardArgs!): [Award!]!
+}
+
+input AwardArgs {
+  userId: String
+  score: Float
+  awardType: String
 }
 
 type Mutation {

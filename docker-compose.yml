@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+
+  app:
+    container_name: workout-app
+    build:
+      context: .
+    env_file:
+      - .docker.env
+    depends_on:
+      - db
+    ports:
+      - '8084:8084'
+    command: [ 'npm', 'start' ]
+
+  db:
+    container_name: workout-db
+    image: mysql:5.7
+    #build: 
+      #context: .
+      #dockerfile: db.dockerfile
+    env_file: 
+      - .docker.env
+    ports:
+      - '3306:3306'
+    volumes:
+        - './data/mysql/db:/var/lib/mysql'

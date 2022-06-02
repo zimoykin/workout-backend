@@ -1,27 +1,33 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { User } from 'src/domain/user/models/user.model';
+import { Column, Entity, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from '../../../domain/user/models/user.model';
 import { Model } from '../../../shared/database/model';
 
 @ObjectType({ description: 'auth' })
+@Entity('auth')
 export class Auth extends Model {
   @Field()
-  _id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Field({ nullable: false })
+  @Column()
   hash: string;
 
   @Field({ nullable: false })
+  @Column()
   salt: string;
 
   @Field()
-  userId: string;
+  @OneToOne(() => User, _ => _.id)
+  user: User;
 
   static get mock(): Auth {
     const auth = new Auth();
-    auth._id = '62931de7588054c76b628d2b';
+    auth.id = '1234-1234-1234-111234';
     auth.hash = '12312312312312312312';
     auth.salt = '12312312312312312312';
-    auth.userId = User.mock._id;
+    auth.user = User.mock;
 
     return auth;
   }

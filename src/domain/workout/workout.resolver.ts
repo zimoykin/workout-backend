@@ -2,7 +2,7 @@ import { NotFoundException, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthUser } from '../../shared/decorators/user.decorator';
 import { AuthGuard } from '../../shared/security/jwt.guard';
-import { WOArgs } from './dto/args';
+import { WOQuery } from './dto/query';
 import { WorkoutInput } from './dto/input';
 import { Workout as Model } from './models/workout.model';
 import { WorkoutService } from './workout.service';
@@ -24,7 +24,7 @@ export class WorkoutResolver {
 
   @UseGuards(AuthGuard)
   @Query((returns) => [Model])
-  workouts(@Args() woArgs: WOArgs): Promise<Model[]> {
+  workouts(@Args() woArgs: WOQuery): Promise<Model[]> {
     return this.woService.findAll(woArgs);
   }
 

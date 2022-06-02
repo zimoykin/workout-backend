@@ -6,22 +6,21 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Auth } from './models/auth.model';
-import { Repository } from '../../shared/database/repository';
 import { RegisterInput } from './dto/register.dto';
 import { User } from '../user/models/user.model';
 import { UserService } from '../user/user.service';
 import { LoginInput } from './dto/login.dto';
 import { ITokens } from './dto/tokens.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
-  repo: Repository<Auth>;
   constructor(
+    @InjectRepository(Auth) private readonly repo: Repository<Auth>,
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
-  ) {
-    this.repo = new Repository(Auth);
-  }
+  ) {}
 
   async validateUser(email: string, pass: string): Promise<any> {
     const auth = await this.findByEmail(email);
@@ -35,10 +34,13 @@ export class AuthService {
   async login(input: LoginInput): Promise<ITokens> {
     const users = await this.userService.findAll({ email: input.email });
     if (users.length) {
-      const logins = await this.repo.findAll({ userId: users[0]._id });
+      const logins = await this.repo.find({
+        where: {},
+        relations: ['auth'],
+      });
       const payload = {
         email: input.email,
-        id: logins[0].userId,
+        id: logins[0].user.id,
         role: users[0].role,
       };
       return {
@@ -63,7 +65,7 @@ export class AuthService {
       const authInput = new Auth();
       authInput.hash = input.password; //TODO
       authInput.salt = input.password; //TODO
-      authInput.userId = created._id;
+      authInput.user = created;
 
       const auth = await this.repo.create(authInput);
       return { status: 'created' };
@@ -79,7 +81,7 @@ export class AuthService {
 
     const payload = {
       email: usr.email,
-      id: usr._id,
+      id: usr.id,
       role: usr.role,
     };
 
@@ -99,7 +101,9 @@ export class AuthService {
     const usr = await this.userService.findAll({ email });
     if (usr) {
       if (usr.length) {
-        const login = await this.repo.findAll({ userId: usr[0]._id });
+        const login = await this.repo.find({
+          where: { user: usr[0].id as any },
+        });
         return login[0];
       } else throw new NotFoundException();
     } else throw new NotFoundException();

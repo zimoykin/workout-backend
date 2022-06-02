@@ -26,3 +26,16 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+
+
+# setup database
+```
+> mysql -uroot;
+> SET PASSWORD FOR 'root'@'localhost' = PASSWORD('password');
+> exit;
+> mysql -uroot -ppassword;
+> CREATE DATABASE workout_db;
+> GRANT ALL PRIVILEGES ON workout_db.* TO 'root'@'%' IDENTIFIED BY 'password';
+> GRANT ALL PRIVILEGES ON workout_db.* TO 'root'@'%'IDENTIFIED WITH mysql_native_password BY 'password';
+> exit;
+```

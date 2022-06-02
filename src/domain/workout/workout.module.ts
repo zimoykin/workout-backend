@@ -6,7 +6,10 @@ import { AuthService } from '../auth/auth.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
 import { PassportModule } from '@nestjs/passport';
-import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Auth } from '../auth/models/auth.model';
+import { User } from '../user/models/user.model';
+import { Workout } from './models/workout.model';
 
 @Module({
   providers: [
@@ -17,6 +20,10 @@ import { ConfigModule } from '@nestjs/config';
     JwtService,
     UserService,
   ],
-  imports: [ConfigModule.forRoot(), PassportModule, JwtModule.register({})],
+  imports: [
+    TypeOrmModule.forFeature([Auth, User, Workout]),
+    PassportModule,
+    JwtModule.register({}),
+  ],
 })
 export class WorkoutModule {}
