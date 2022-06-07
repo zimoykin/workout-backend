@@ -1,5 +1,11 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Model } from '../../../shared/database/model';
 import { UserRole } from '../../../shared/dto/userRole.dto';
 import { UserInput } from '../dto/input.dto';
@@ -28,8 +34,12 @@ export class User extends Model {
   role: UserRole;
 
   @Field()
-  @Column()
+  @CreateDateColumn()
   createdAt: Date;
+
+  @Field()
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   static fromInput(input: UserInput): User {
     const user = new User();

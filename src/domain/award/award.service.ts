@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { IAwardInput } from './dto/input.dto';
 import { Award as Model } from './models/award.model';
 
@@ -12,6 +12,9 @@ export class AwardService {
 
   findOneById = async (id: string) => this.repo.findOneBy({ id });
   findAll = async (query: any) => this.repo.find(query);
+  findByIds = async (...ids: string[]): Promise<Model[]> => {
+    return this.repo.find({ where: { id: In(ids) } });
+  };
   create = async (input: IAwardInput) => {
     const model = new Model();
     Object.assign(model, input);

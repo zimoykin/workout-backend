@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { UserInput } from './dto/input.dto';
 import { UserUpdate } from './dto/update.dto';
 import { User } from './models/user.model';
@@ -25,6 +25,9 @@ export class UserService {
 
   async findOneById(id: string): Promise<User> {
     return this.repo.findOneBy({ id: id });
+  }
+  async findByIds(...ids: string[]): Promise<User[]> {
+    return this.repo.find({ where: { id: In(ids) } });
   }
 
   async findAll(query?: Partial<User>): Promise<User[]> {

@@ -6,12 +6,12 @@ import { UserUpdate } from './dto/update.dto';
 import { User } from './models/user.model';
 import { UserService } from './user.service';
 
-@Resolver((of) => User)
+@Resolver(() => User)
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
   @UseGuards(AdminGuard)
-  @Query((returns) => User)
+  @Query(() => User)
   async user(@Args('id') id: string): Promise<User> {
     const user = await this.userService.findOneById(id);
     if (!user) {
@@ -21,7 +21,7 @@ export class UserResolver {
   }
 
   @UseGuards(AdminGuard)
-  @Query((returns) => [User])
+  @Query(() => [User])
   users(
     @Args('firstName', { nullable: true }) firstName?: string,
     @Args('lastName', { nullable: true }) lastName?: string,
@@ -33,7 +33,7 @@ export class UserResolver {
   }
 
   @UseGuards(AdminGuard)
-  @Mutation((returns) => User)
+  @Mutation(() => User)
   async updateUser(
     @Args('id', { nullable: false }) id: string,
     @Args('userUpdate', { nullable: false }) update: UserUpdate,
@@ -43,7 +43,7 @@ export class UserResolver {
   }
 
   @UseGuards(AdminGuard)
-  @Mutation((returns) => Boolean)
+  @Mutation(() => Boolean)
   async removeUser(@AuthUser() user: User, @Args('id') id: string) {
     console.log(user);
     return this.userService

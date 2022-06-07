@@ -8,17 +8,17 @@ import { ITokens } from './dto/tokens.dto';
 @Resolver()
 export class AuthResolver {
   constructor(private readonly service: AuthService) {}
-  @Mutation((of) => IStatusResponse)
+  @Mutation(() => IStatusResponse)
   async register(
     @Args('registerArgs') registerArgs: RegisterInput,
   ): Promise<{ status: string }> {
     return this.service.register(registerArgs);
   }
-  @Mutation((of) => ITokens)
+  @Mutation(() => ITokens)
   async login(@Args('loginArgs') loginArgs: LoginInput): Promise<ITokens> {
     return this.service.login(loginArgs);
   }
-  @Mutation((of) => ITokens)
+  @Mutation(() => ITokens)
   async refresh(@Args('refreshToken') refreshToken: string): Promise<ITokens> {
     return this.service.refresh(refreshToken);
   }

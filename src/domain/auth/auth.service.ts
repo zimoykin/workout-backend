@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -12,63 +13,82 @@ import { UserService } from '../user/user.service';
 import { LoginInput } from './dto/login.dto';
 import { ITokens } from './dto/tokens.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(Auth) private readonly repo: Repository<Auth>,
+    @InjectRepository(User) private readonly userRepo: Repository<User>,
+    private connection: DataSource,
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
   ) {}
 
   async validateUser(email: string, pass: string): Promise<any> {
     const auth = await this.findByEmail(email);
-    if (auth && auth.hash === pass) {
-      const { hash, salt, ...result } = auth;
+    if (auth && auth.checkPassword(pass)) {
+      const { ...result } = auth;
       return result;
     }
     return null;
   }
 
   async login(input: LoginInput): Promise<ITokens> {
-    const users = await this.userService.findAll({ email: input.email });
-    if (users.length) {
-      const logins = await this.repo.find({
-        where: {},
-        relations: ['auth'],
+    return this.repo
+      .createQueryBuilder('auth')
+      .leftJoinAndSelect('auth.user', 'user')
+      .where('user.email = :email', { email: input.email })
+      .getOne()
+      .then((auth) => {
+        if (!auth) throw new NotFoundException();
+        if (!auth.checkPassword(input.password))
+          throw new BadRequestException('wrong password!');
+        const payload = {
+          email: auth.user.email,
+          id: auth.user.id,
+          role: auth.user.role,
+        };
+
+        return {
+          accessToken: this.jwtService.sign(payload, {
+            expiresIn: process.env.MODE === 'DEV' ? '30m' : '5m',
+            secret: process.env.JWT_SECRET,
+          }),
+          refreshToken: this.jwtService.sign(payload, {
+            expiresIn: '7d',
+            secret: process.env.JWT_SECRET,
+          }),
+        };
+      })
+      .catch((err) => {
+        Logger.debug(err);
+        throw err;
       });
-      const payload = {
-        email: input.email,
-        id: logins[0].user.id,
-        role: users[0].role,
-      };
-      return {
-        accessToken: this.jwtService.sign(payload, {
-          expiresIn: process.env.MODE === 'DEV' ? '30m' : '5m',
-          secret: process.env.JWT_SECRET,
-        }),
-        refreshToken: this.jwtService.sign(payload, {
-          expiresIn: '7d',
-          secret: process.env.JWT_SECRET,
-        }),
-      };
-    } else throw new NotFoundException();
   }
 
   async register(input: RegisterInput) {
     const logins = await this.userService.findAll({ email: input.email });
     if (logins.length === 0) {
       const { password, ...userInput } = input;
-      const created = await this.userService.create(User.fromInput(userInput));
-
+      const user = User.fromInput(userInput);
       const authInput = new Auth();
-      authInput.hash = input.password; //TODO
-      authInput.salt = input.password; //TODO
-      authInput.user = created;
+      authInput.hashPassword = input.password;
+      authInput.user = user;
 
-      const auth = await this.repo.create(authInput);
-      return { status: 'created' };
+      const queryRunner = this.connection.createQueryRunner();
+      queryRunner.startTransaction();
+
+      try {
+        await queryRunner.manager.save(user);
+        await queryRunner.manager.save(authInput);
+        return queryRunner
+          .commitTransaction()
+          .then(() => ({ status: 'created' }));
+      } catch (error) {
+        console.log(error);
+        return { status: 'error' };
+      }
     } else throw new ConflictException();
   }
 

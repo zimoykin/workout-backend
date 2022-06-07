@@ -1,15 +1,26 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { AuthUser } from '../../shared/decorators/user.decorator';
-import { IAuthorizedUser } from 'src/shared/dto/auth.interface';
+import { IAuthorizedUser } from '../../shared/dto/auth.interface';
 import { AuthGuard } from '../../shared/security/jwt.guard';
 import { Award } from './models/award.model';
 import { AwardService } from './award.service';
 import { AwardArgs } from './dto/query.dto';
+import DataLoader from 'dataloader';
+import { User } from '../user/models/user.model';
 
-@Resolver()
+@Resolver(() => Award)
 export class AwardResolver {
-  constructor(private readonly service: AwardService) {}
+  constructor(
+    private readonly service: AwardService
+    ) {}
 
   @UseGuards(AuthGuard)
   @Query((of) => [Award])
@@ -18,5 +29,14 @@ export class AwardResolver {
     @Args('args') args: AwardArgs,
   ): Promise<Award[]> {
     return this.service.findAll({ userId: auth.id, ...args });
+  }
+
+  @ResolveField('user', () => User)
+  getUser(
+    @Parent() award: Award,
+    @Context('usersLoader') usersLoader: DataLoader<string, User>,
+  ) {
+    const { user } = award;
+    return usersLoader.load(user.id);
   }
 }
