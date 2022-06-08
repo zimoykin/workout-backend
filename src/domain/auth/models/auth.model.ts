@@ -20,11 +20,9 @@ export class Auth extends Model {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Field({ nullable: false })
   @Column({ type: 'varchar', length: length * 2 })
   private hash: string;
 
-  @Field({ nullable: false })
   @Column({ type: 'varchar', length: length * 2 })
   private salt: string;
 
@@ -34,8 +32,8 @@ export class Auth extends Model {
   user: User;
 
   //methods
-  checkPassword = (base64password: string): boolean =>
-    this.hash === generateHash(base64password, this.salt, iterations, length);
+  checkPassword = (base64: string): boolean =>
+    this.hash === generateHash(base64, this.salt, iterations, length);
 
   set hashPassword(base64: string) {
     this.salt = generateSalt(length);
@@ -48,8 +46,8 @@ export class Auth extends Model {
 
   static get mock(): Auth {
     const auth = new Auth();
-    auth.id = '1234-1234-1234-111234';
-    auth.setHash('@Admin123');
+    auth.id = '88fe7035-58ce-449a-9194-e54b729b8163';
+    auth.hashPassword = '@Admin123';
     auth.user = User.mock;
     return auth;
   }

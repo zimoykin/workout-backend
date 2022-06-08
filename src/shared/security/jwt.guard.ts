@@ -27,7 +27,7 @@ export class AuthGuard implements CanActivate {
   async validate(token: string): Promise<[string, string] | undefined> {
     const tokenKey = token.split(' ');
     if (tokenKey.length === 2 && tokenKey[0] === 'Bearer' && tokenKey[1]) {
-      const result = await this.service.verify(token);
+      const result = await this.service.verify(tokenKey[1]);
       if (result) {
         return result;
       } else return undefined;

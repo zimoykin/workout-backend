@@ -1,10 +1,7 @@
-import { ArgsType, Field, Int } from '@nestjs/graphql';
+import { ArgsType, Field } from '@nestjs/graphql';
 
 @ArgsType()
 export class WOQuery {
-  @Field()
-  userId: string;
-
-  @Field()
-  bpm: number;
+  @Field({ nullable: true })
+  bpm?: number;
 }

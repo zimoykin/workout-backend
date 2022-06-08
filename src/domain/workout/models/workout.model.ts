@@ -2,14 +2,20 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { IWorkoutType } from '../../../shared/types';
 import { Model } from '../../../shared/database/model';
 import { User } from '../../user/models/user.model';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @ObjectType({ description: 'workout' })
 @Entity('workout')
 export class Workout extends Model {
   @Field()
   @PrimaryGeneratedColumn('uuid')
-  _id: string;
+  id: string;
 
   @Field({ nullable: false })
   @Column()
@@ -28,7 +34,7 @@ export class Workout extends Model {
   bpm: number;
 
   @Field()
-  @Column()
+  @CreateDateColumn()
   createdAt: Date;
 
   @Field()

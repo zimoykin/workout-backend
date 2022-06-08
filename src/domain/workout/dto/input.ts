@@ -18,8 +18,4 @@ export class WorkoutInput {
   @Field({ nullable: false })
   @IsNumber()
   bpm: number;
-
-  @Field({ nullable: false })
-  @IsString()
-  userId: string;
 }

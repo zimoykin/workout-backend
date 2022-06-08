@@ -20,7 +20,7 @@ scalar Date
 
 """workout"""
 type Workout {
-  _id: String!
+  id: String!
   workoutType: String!
   start: Date!
   end: Date!
@@ -47,7 +47,7 @@ type Award {
 
 type Query {
   workout(id: String!): Workout!
-  workouts(userId: String!, bpm: Float!): [Workout!]!
+  workouts(bpm: Float): [Workout!]!
   user(id: String!): User!
   users(firstName: String, lastName: String): [User!]!
   awards(args: AwardArgs!): [Award!]!
@@ -74,7 +74,6 @@ input WorkoutInput {
   start: String!
   end: String!
   bpm: Float!
-  userId: String!
 }
 
 input RegisterInput {

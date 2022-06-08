@@ -8,12 +8,12 @@ import { Workout as Model } from './models/workout.model';
 import { WorkoutService } from './workout.service';
 import { IAuthorizedUser } from '../../shared/dto/auth.interface';
 
-@Resolver((of) => Model)
+@Resolver(() => Model)
 export class WorkoutResolver {
   constructor(private readonly woService: WorkoutService) {}
 
   @UseGuards(AuthGuard)
-  @Query((returns) => Model)
+  @Query(() => Model)
   async workout(@Args('id') id: string): Promise<Model> {
     const user = await this.woService.findOneById(id);
     if (!user) {
@@ -23,22 +23,26 @@ export class WorkoutResolver {
   }
 
   @UseGuards(AuthGuard)
-  @Query((returns) => [Model])
-  workouts(@Args() woArgs: WOQuery): Promise<Model[]> {
-    return this.woService.findAll(woArgs);
+  @Query(() => [Model])
+  workouts(
+    @AuthUser() auth: IAuthorizedUser,
+    @Args() woArgs: WOQuery
+    ): Promise<Model[]> {
+    return this.woService.findAll(woArgs, auth.id);
   }
 
   @UseGuards(AuthGuard)
-  @Mutation((returns) => Model)
+  @Mutation(() => Model)
   async addWorkout(
     @AuthUser() auth: IAuthorizedUser,
     @Args('input') input: WorkoutInput,
   ): Promise<Model> {
-    const user = await this.woService.create({ userId: auth.id, ...input });
+    console.log(auth)
+    const user = await this.woService.create(input, auth.id);
     return user;
   }
   @UseGuards(AuthGuard)
-  @Mutation((returns) => Boolean)
+  @Mutation(() => Boolean)
   async removeWorkout(@Args('id') id: string) {
     return this.woService
       .remove(id)
