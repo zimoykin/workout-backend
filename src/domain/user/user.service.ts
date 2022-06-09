@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { UserInput } from './dto/input.dto';
@@ -15,6 +19,31 @@ export class UserService {
     const updated = await this.repo.update(id, data);
     if (updated) return this.findOneById(id);
     else throw new InternalServerErrorException();
+  }
+
+  async addFriend(userId: string, friendId: string): Promise<User> {
+    const qb = this.repo.createQueryBuilder('model');
+    qb.leftJoinAndSelect('model.friends', 'friends');
+    qb.where('model.id = :id', { id: userId });
+    const user = await qb.getOne();
+    const friend = await this.findOneById(friendId);
+
+    if (user && friend) {
+      user.friends.push(friend);
+    } else throw new BadRequestException();
+    return this.repo.save(user);
+  }
+
+  async removeFriend(userId: string, friendId: string): Promise<User> {
+    const qb = this.repo.createQueryBuilder('model');
+    qb.leftJoinAndSelect('model.friends', 'friends');
+    qb.where('model.id = :id', { id: userId });
+    const user = await qb.getOne();
+    if (user) {
+      user.friends = user.friends.filter((fr) => fr.id !== friendId);
+      this.repo.save(user);
+    } else throw new BadRequestException();
+    return this.repo.save(user);
   }
 
   async create(input: UserInput): Promise<User> {

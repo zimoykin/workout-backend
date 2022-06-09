@@ -1,7 +1,13 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, ObjectType } from '@nestjs/graphql';
 import { User } from '../../user/models/user.model';
 import { Model } from '../../../shared/database/model';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  RelationId,
+} from 'typeorm';
 
 @ObjectType()
 @Entity('award')
@@ -18,9 +24,13 @@ export class Award extends Model {
   @Column()
   awardType: string;
 
-  @Field({ nullable: false })
+  @Field(() => User, { nullable: false })
   @ManyToOne(() => User, (_) => _.id)
   user: User;
+
+  @HideField()
+  @RelationId((aw: Award) => aw.user)
+  userId: string;
 
   static get mock(): Award {
     const model = new Award();

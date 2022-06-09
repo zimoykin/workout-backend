@@ -7,7 +7,7 @@ export class AdminGuard implements CanActivate {
   constructor(private readonly service: AuthService) {}
   getRequest(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context);
-    return ctx.getContext().req;
+    return ctx.getContext().req.auth;
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

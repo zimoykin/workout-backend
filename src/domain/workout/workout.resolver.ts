@@ -1,12 +1,22 @@
 import { NotFoundException, UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { AuthUser } from '../../shared/decorators/user.decorator';
 import { AuthGuard } from '../../shared/security/jwt.guard';
 import { WOQuery } from './dto/query';
 import { WorkoutInput } from './dto/input';
-import { Workout as Model } from './models/workout.model';
+import { Workout as Model, Workout } from './models/workout.model';
 import { WorkoutService } from './workout.service';
 import { IAuthorizedUser } from '../../shared/dto/auth.interface';
+import { User } from '../user/models/user.model';
+import DataLoader from 'dataloader';
 
 @Resolver(() => Model)
 export class WorkoutResolver {
@@ -26,8 +36,8 @@ export class WorkoutResolver {
   @Query(() => [Model])
   workouts(
     @AuthUser() auth: IAuthorizedUser,
-    @Args() woArgs: WOQuery
-    ): Promise<Model[]> {
+    @Args() woArgs: WOQuery,
+  ): Promise<Model[]> {
     return this.woService.findAll(woArgs, auth.id);
   }
 
@@ -37,7 +47,7 @@ export class WorkoutResolver {
     @AuthUser() auth: IAuthorizedUser,
     @Args('input') input: WorkoutInput,
   ): Promise<Model> {
-    console.log(auth)
+    console.log(auth);
     const user = await this.woService.create(input, auth.id);
     return user;
   }
@@ -48,5 +58,14 @@ export class WorkoutResolver {
       .remove(id)
       .then(() => true)
       .catch(() => false);
+  }
+
+  @ResolveField('user', () => User)
+  getUser(
+    @Parent() workout: Workout,
+    @Context('usersLoader') usersLoader: DataLoader<string, User>,
+  ) {
+    const { userId } = workout;
+    return usersLoader.load(userId);
   }
 }

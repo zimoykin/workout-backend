@@ -4,20 +4,6 @@
 
 directive @upper on FIELD_DEFINITION
 
-"""user"""
-type User {
-  id: String!
-  firstName: String!
-  lastName: String!
-  email: String!
-  role: String!
-  createdAt: Date!
-  updatedAt: Date!
-}
-
-"""Date custom scalar type"""
-scalar Date
-
 """workout"""
 type Workout {
   id: String!
@@ -29,13 +15,18 @@ type Workout {
   user: User!
 }
 
-type IStatusResponse {
-  status: String!
-}
+"""Date custom scalar type"""
+scalar Date
 
-type ITokens {
-  accessToken: String!
-  refreshToken: String!
+"""user"""
+type User {
+  id: String!
+  firstName: String!
+  lastName: String!
+  email: String!
+  role: String!
+  createdAt: Date!
+  updatedAt: Date!
 }
 
 type Award {
@@ -43,6 +34,15 @@ type Award {
   score: Float!
   awardType: String!
   user: User!
+}
+
+type IStatusResponse {
+  status: String!
+}
+
+type ITokens {
+  accessToken: String!
+  refreshToken: String!
 }
 
 type Query {
@@ -65,6 +65,8 @@ type Mutation {
   register(registerArgs: RegisterInput!): IStatusResponse!
   login(loginArgs: LoginInput!): ITokens!
   refresh(refreshToken: String!): ITokens!
+  addFriend(userId: String!): User!
+  removeFriend(userId: String!): User!
   updateUser(id: String!, userUpdate: UserUpdate!): User!
   removeUser(id: String!): Boolean!
 }

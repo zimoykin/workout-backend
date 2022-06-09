@@ -1,10 +1,15 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import { Workout } from 'src/domain/workout/models/workout.model';
 import {
   Column,
   Entity,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToMany,
+  JoinTable,
+  RelationId,
+  OneToMany,
 } from 'typeorm';
 import { Model } from '../../../shared/database/model';
 import { UserRole } from '../../../shared/dto/userRole.dto';
@@ -40,6 +45,15 @@ export class User extends Model {
   @Field()
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @HideField()
+  @ManyToMany(() => User)
+  @JoinTable({ name: 'friends' })
+  friends: User[];
+
+  @HideField()
+  @OneToMany(() => Workout, (_) => _.user)
+  workouts: Workout[];
 
   static fromInput(input: UserInput): User {
     const user = new User();

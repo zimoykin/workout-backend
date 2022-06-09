@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, ObjectType } from '@nestjs/graphql';
 import { IWorkoutType } from '../../../shared/types';
 import { Model } from '../../../shared/database/model';
 import { User } from '../../user/models/user.model';
@@ -8,6 +8,7 @@ import {
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from 'typeorm';
 
 @ObjectType({ description: 'workout' })
@@ -37,9 +38,13 @@ export class Workout extends Model {
   @CreateDateColumn()
   createdAt: Date;
 
-  @Field()
+  @Field(() => User, { nullable: false })
   @ManyToOne(() => User, (_) => _.id)
   user: User;
+
+  @HideField()
+  @RelationId((wo: Workout) => wo.user)
+  userId: string;
 
   static get mock(): Workout {
     const mock = new Workout();

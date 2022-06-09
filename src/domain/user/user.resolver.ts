@@ -1,5 +1,7 @@
 import { NotFoundException, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { IAuthorizedUser } from '../../shared/dto/auth.interface';
+import { AuthGuard } from '../../shared/security/jwt.guard';
 import { AuthUser } from '../../shared/decorators/user.decorator';
 import { AdminGuard } from '../../shared/security/admin.guard';
 import { UserUpdate } from './dto/update.dto';
@@ -30,6 +32,24 @@ export class UserResolver {
     if (firstName) filter.firstName = firstName;
     if (lastName) filter.lastName = lastName;
     return this.userService.findAll(filter);
+  }
+
+  @UseGuards(AuthGuard)
+  @Mutation(() => User)
+  async addFriend(
+    @AuthUser() auth: IAuthorizedUser,
+    @Args('userId', { nullable: false }) userId: string,
+  ): Promise<User> {
+    return this.userService.addFriend(auth.id, userId);
+  }
+
+  @UseGuards(AuthGuard)
+  @Mutation(() => User)
+  async removeFriend(
+    @AuthUser() auth: IAuthorizedUser,
+    @Args('userId', { nullable: false }) userId: string,
+  ): Promise<User> {
+    return this.userService.removeFriend(auth.id, userId);
   }
 
   @UseGuards(AdminGuard)
