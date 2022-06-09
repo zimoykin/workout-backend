@@ -1,5 +1,5 @@
 import { Field, HideField, ObjectType } from '@nestjs/graphql';
-import { Workout } from 'src/domain/workout/models/workout.model';
+import { Workout } from '../../../domain/workout/models/workout.model';
 import {
   Column,
   Entity,
@@ -8,10 +8,9 @@ import {
   UpdateDateColumn,
   ManyToMany,
   JoinTable,
-  RelationId,
-  OneToMany,
+  OneToMany
 } from 'typeorm';
-import { Model } from '../../../shared/database/model';
+import { Model } from '../../../shared/mongo-database/model';
 import { UserRole } from '../../../shared/dto/userRole.dto';
 import { UserInput } from '../dto/input.dto';
 
@@ -38,6 +37,10 @@ export class User extends Model {
   @Column()
   role: UserRole;
 
+  @Field({ nullable: false })
+  @Column()
+  weight: number;
+
   @Field()
   @CreateDateColumn()
   createdAt: Date;
@@ -58,17 +61,6 @@ export class User extends Model {
   static fromInput(input: UserInput): User {
     const user = new User();
     Object.assign(user, input);
-    return user;
-  }
-
-  static get mock(): User {
-    const user = new User();
-    user.id = '62931de7588054c76b628d2b';
-    user.email = 'test@test.test';
-    user.firstName = 'John';
-    user.lastName = 'Doe';
-    user.role = UserRole.user;
-
     return user;
   }
 }

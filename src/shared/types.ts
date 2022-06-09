@@ -1,6 +1,10 @@
 export enum IWorkoutType {
-    running = 'run',
-    walking = 'walking',
-    hiit = 'hiit',
-    meditation = 'meditation'
+    Running = 'Running',
+    HighIntensityIntervalTraining = 'High-intensity interval training',
+    Cycling = 'Cycling',
+    Walking = 'Walking',
+    Swimming = 'Swimming',
+    Dancing = 'Dancing',
+    Yoga = 'Yoga',
+    Meditation = 'Meditation'
 }

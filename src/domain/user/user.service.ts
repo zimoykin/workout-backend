@@ -59,7 +59,7 @@ export class UserService {
     return this.repo.find({ where: { id: In(ids) } });
   }
 
-  async findAll(query?: Partial<User>): Promise<User[]> {
+  async findAll(query?: any): Promise<User[]> { //TODO
     return this.repo.find({ where: { ...query } });
   }
 

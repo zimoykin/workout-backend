@@ -8,10 +8,12 @@ directive @upper on FIELD_DEFINITION
 type Workout {
   id: String!
   workoutType: String!
-  start: Date!
-  end: Date!
+  start: String!
+  end: String!
   bpm: Float!
+  calories: Float
   createdAt: Date!
+  updatedAt: Date!
   user: User!
 }
 
@@ -25,6 +27,7 @@ type User {
   lastName: String!
   email: String!
   role: String!
+  weight: Float!
   createdAt: Date!
   updatedAt: Date!
 }
@@ -33,6 +36,8 @@ type Award {
   id: String!
   score: Float!
   awardType: String!
+  createdAt: Date!
+  updatedAt: Date!
   user: User!
 }
 
@@ -48,6 +53,7 @@ type ITokens {
 type Query {
   workout(id: String!): Workout!
   workouts(bpm: Float): [Workout!]!
+  workoutsUserId(id: String!): [Workout!]!
   user(id: String!): User!
   users(firstName: String, lastName: String): [User!]!
   awards(args: AwardArgs!): [Award!]!

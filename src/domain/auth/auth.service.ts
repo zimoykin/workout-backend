@@ -19,7 +19,6 @@ import { DataSource, Repository } from 'typeorm';
 export class AuthService {
   constructor(
     @InjectRepository(Auth) private readonly repo: Repository<Auth>,
-    @InjectRepository(User) private readonly userRepo: Repository<User>,
     private connection: DataSource,
     private readonly jwtService: JwtService,
     private readonly userService: UserService,

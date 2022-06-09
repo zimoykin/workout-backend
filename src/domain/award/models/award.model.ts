@@ -1,12 +1,14 @@
 import { Field, HideField, ObjectType } from '@nestjs/graphql';
 import { User } from '../../user/models/user.model';
-import { Model } from '../../../shared/database/model';
+import { Model } from '../../../shared/mongo-database/model';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
   RelationId,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @ObjectType()
@@ -24,6 +26,14 @@ export class Award extends Model {
   @Column()
   awardType: string;
 
+  @Field()
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @Field()
+  @UpdateDateColumn()
+  updatedAt: Date;
+
   @Field(() => User, { nullable: false })
   @ManyToOne(() => User, (_) => _.id)
   user: User;
@@ -32,12 +42,4 @@ export class Award extends Model {
   @RelationId((aw: Award) => aw.user)
   userId: string;
 
-  static get mock(): Award {
-    const model = new Award();
-    model.id = '12341-23412-34123-1324';
-    model.score = 100;
-    model.awardType = 'golden';
-    model.user = User.mock;
-    return;
-  }
 }

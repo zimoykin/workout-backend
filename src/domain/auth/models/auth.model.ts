@@ -2,13 +2,15 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { generateHash, generateSalt } from '../../../shared/security';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../../domain/user/models/user.model';
-import { Model } from '../../../shared/database/model';
+import { Model } from '../../../shared/mongo-database/model';
 
 const length = 512;
 const iterations = 32;
@@ -27,6 +29,14 @@ export class Auth extends Model {
   private salt: string;
 
   @Field()
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @Field()
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @Field(() => User)
   @OneToOne(() => User, (_) => _.id)
   @JoinColumn()
   user: User;
@@ -42,13 +52,5 @@ export class Auth extends Model {
 
   private setHash(base64Password: string) {
     this.hash = generateHash(base64Password, this.salt, iterations, length);
-  }
-
-  static get mock(): Auth {
-    const auth = new Auth();
-    auth.id = '88fe7035-58ce-449a-9194-e54b729b8163';
-    auth.hashPassword = '@Admin123';
-    auth.user = User.mock;
-    return auth;
   }
 }

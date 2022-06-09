@@ -25,17 +25,12 @@ export class WorkoutService {
     qb.leftJoinAndSelect('user.friends', 'friends');
     qb.orWhere('user.id = :userId', { userId });
     qb.orWhere('friends.id = :userId', { userId });
-
-    // qb.where([
-    //   'user.userId = :userID',
-    //   { userID: userId },
-    //   // 'friends.userId_2 = :userID',
-    //   // { userID: userId },
-    // ]);
-    return  qb.getMany();
-    //return this.repo.find();
+    return qb.getMany();
   };
 
+  findAllByUserId = async (userId: string) => {
+    return this.repo.find({ where: { id: userId } });
+  };
   create = async (input: WorkoutInput, userId: string) => {
     const user = await this.userRepo.findOneBy({ id: userId });
     if (!user) throw new NotFoundException();

@@ -42,6 +42,15 @@ export class WorkoutResolver {
   }
 
   @UseGuards(AuthGuard)
+  @Query(() => [Model])
+  workoutsUserId(
+    @AuthUser() auth: IAuthorizedUser,
+    @Args('id') userId: string,
+  ): Promise<Model[]> {
+    return this.woService.findAllByUserId(userId);
+  }
+
+  @UseGuards(AuthGuard)
   @Mutation(() => Model)
   async addWorkout(
     @AuthUser() auth: IAuthorizedUser,
