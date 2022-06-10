@@ -13,21 +13,22 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { config } from 'ormconfig';
 import { createUsersLoader } from './domain/user/user.loader';
 import { UserService } from './domain/user/user.service';
-import { User } from './domain/user/models/user.model';
-import { Auth } from './domain/auth/models/auth.model';
+import { createAwardsLoader } from './domain/award/award.loader';
+import { AwardService } from './domain/award/award.service';
 
 const imports = [
   ConfigModule.forRoot(),
   TypeOrmModule.forRoot(config),
   GraphQLModule.forRootAsync({
     driver: ApolloDriver,
-    imports: [UserModule],
-    inject: [UserService],
-    useFactory: (usersService: UserService) => ({
+    imports: [UserModule, AwardModule],
+    inject: [UserService, AwardService],
+    useFactory: (usersService: UserService, awardService: AwardService) => ({
       autoSchemaFile: 'schema.gql',
       transformSchema: (schema) => upperDirectiveTransformer(schema, 'upper'),
       context: () => ({
         usersLoader: createUsersLoader(usersService),
+        awardsLoader: createAwardsLoader(awardService),
       }),
       buildSchemaOptions: {
         directives: [

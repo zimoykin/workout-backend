@@ -8,11 +8,12 @@ import {
   UpdateDateColumn,
   ManyToMany,
   JoinTable,
-  OneToMany
+  OneToMany,
 } from 'typeorm';
 import { Model } from '../../../shared/mongo-database/model';
 import { UserRole } from '../../../shared/dto/userRole.dto';
 import { UserInput } from '../dto/input.dto';
+import { Award } from 'src/domain/award/models/award.model';
 
 @ObjectType({ description: 'user' })
 @Entity('user')
@@ -41,6 +42,10 @@ export class User extends Model {
   @Column()
   weight: number;
 
+  @Field({ nullable: false })
+  @Column()
+  age: number; //years
+
   @Field()
   @CreateDateColumn()
   createdAt: Date;
@@ -57,6 +62,10 @@ export class User extends Model {
   @HideField()
   @OneToMany(() => Workout, (_) => _.user)
   workouts: Workout[];
+
+  @Field(() => [Award])
+  @OneToMany(() => Award, (_) => _.user)
+  awards: Award[];
 
   static fromInput(input: UserInput): User {
     const user = new User();

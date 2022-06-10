@@ -27,11 +27,7 @@ export class Workout extends Model {
 
   @Field({ nullable: false })
   @Column()
-  start: string;
-
-  @Field({ nullable: false })
-  @Column()
-  end: string;
+  duration: number; //minutes
 
   @Field({ nullable: false })
   @Column()
@@ -60,10 +56,10 @@ export class Workout extends Model {
   @BeforeInsert()
   calculateCalories() {
     this.calories = calculate(
-      this.workoutType,
+      this.user.age,
       this.user.weight,
-      this.end,
-      this.start,
+      this.duration,
+      this.bpm
     );
   }
 }

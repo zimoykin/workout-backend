@@ -42,12 +42,12 @@ export class Auth extends Model {
   user: User;
 
   //methods
-  checkPassword = (base64: string): boolean =>
-    this.hash === generateHash(base64, this.salt, iterations, length);
+  checkPassword = (password: string): boolean =>
+    this.hash === generateHash(password, this.salt, iterations, length);
 
-  set hashPassword(base64: string) {
+  set hashPassword(password: string) {
     this.salt = generateSalt(length);
-    this.setHash(base64);
+    this.setHash(password);
   }
 
   private setHash(base64Password: string) {

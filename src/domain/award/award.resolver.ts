@@ -23,7 +23,7 @@ export class AwardResolver {
     ) {}
 
   @UseGuards(AuthGuard)
-  @Query((of) => [Award])
+  @Query(() => [Award])
   awards(
     @AuthUser() auth: IAuthorizedUser,
     @Args('args') args: AwardArgs,

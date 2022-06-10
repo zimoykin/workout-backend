@@ -5,12 +5,14 @@ import { Workout } from './models/workout.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { User } from '../user/models/user.model';
+import { AwardService } from '../award/award.service';
 
 @Injectable()
 export class WorkoutService {
   constructor(
     @InjectRepository(Workout) private readonly repo: Repository<Workout>,
     @InjectRepository(User) private readonly userRepo: Repository<User>,
+    private readonly awards: AwardService,
   ) {}
 
   findOneById = async (id: string) => {
@@ -39,9 +41,10 @@ export class WorkoutService {
     Object.assign(model, input);
     model.user = user;
     const created = await this.repo.save(model);
-
+    this.awards.updateAwards(userId);
     return created;
   };
+
   update = async (id: string) => {
     return {} as any;
   };

@@ -3,11 +3,12 @@ import {
   IsEmail,
   IsEnum,
   Matches,
+  Max,
   MaxLength,
+  Min,
   MinLength,
 } from 'class-validator';
 import { UserRole } from '../../../shared/dto/userRole.dto';
-
 
 @InputType()
 export class RegisterInput {
@@ -32,4 +33,14 @@ export class RegisterInput {
   @Field({ nullable: false })
   @IsEnum(UserRole)
   role: UserRole;
+
+  @Field({ nullable: false })
+  @Min(0)
+  @Max(300)
+  weight: number;
+
+  @Field({ nullable: false })
+  @Min(0)
+  @Max(150)
+  age: number;
 }

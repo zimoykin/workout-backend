@@ -8,8 +8,7 @@ directive @upper on FIELD_DEFINITION
 type Workout {
   id: String!
   workoutType: String!
-  start: String!
-  end: String!
+  duration: Float!
   bpm: Float!
   calories: Float
   createdAt: Date!
@@ -20,6 +19,15 @@ type Workout {
 """Date custom scalar type"""
 scalar Date
 
+type Award {
+  id: String!
+  score: Float!
+  awardType: String!
+  createdAt: Date!
+  updatedAt: Date!
+  user: User!
+}
+
 """user"""
 type User {
   id: String!
@@ -28,17 +36,10 @@ type User {
   email: String!
   role: String!
   weight: Float!
+  age: Float!
   createdAt: Date!
   updatedAt: Date!
-}
-
-type Award {
-  id: String!
-  score: Float!
-  awardType: String!
-  createdAt: Date!
-  updatedAt: Date!
-  user: User!
+  awards: [Award!]!
 }
 
 type IStatusResponse {
@@ -52,7 +53,7 @@ type ITokens {
 
 type Query {
   workout(id: String!): Workout!
-  workouts(bpm: Float): [Workout!]!
+  workouts(bpm: Float, minCalories: Float): [Workout!]!
   workoutsUserId(id: String!): [Workout!]!
   user(id: String!): User!
   users(firstName: String, lastName: String): [User!]!
@@ -60,9 +61,13 @@ type Query {
 }
 
 input AwardArgs {
-  userId: String
-  score: Float
+  interval: Interval
   awardType: String
+}
+
+input Interval {
+  from: String!
+  to: String!
 }
 
 type Mutation {
@@ -79,8 +84,7 @@ type Mutation {
 
 input WorkoutInput {
   workoutType: String!
-  start: String!
-  end: String!
+  duration: Float!
   bpm: Float!
 }
 
@@ -90,6 +94,8 @@ input RegisterInput {
   firstName: String!
   lastName: String!
   role: String!
+  weight: Float!
+  age: Float!
 }
 
 input LoginInput {

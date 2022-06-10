@@ -6,7 +6,7 @@ import { AwardService } from './award.service';
 export function createAwardsLoader(service: AwardService) {
   return new DataLoader<string, Award>(async (ids) => {
     const models = await service.findByIds(...ids);
-    const modelMaps = maps(models, (_) => _.id);
-    return ids.map((id) => modelMaps[id]);
+    const mapper = maps(models, (_) => _.id);
+    return ids.map((id) => mapper[id]);
   });
 }

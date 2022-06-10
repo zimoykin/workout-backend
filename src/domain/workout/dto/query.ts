@@ -4,4 +4,8 @@ import { ArgsType, Field } from '@nestjs/graphql';
 export class WOQuery {
   @Field({ nullable: true })
   bpm?: number;
+
+  @Field({ nullable: true })
+  minCalories?: number;
+
 }

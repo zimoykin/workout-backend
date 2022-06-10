@@ -1,21 +1,19 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsDateString, IsNumber, IsString, MaxLength } from 'class-validator';
+import { IsEnum, IsNumber, Min } from 'class-validator';
+import { IWorkoutType } from '../../../shared/types';
 
 @InputType()
 export class WorkoutInput {
   @Field({ nullable: false })
-  @MaxLength(30)
+  @IsEnum(IWorkoutType)
   workoutType: string;
 
   @Field({ nullable: false })
-  @IsDateString()
-  start: string;
-
-  @Field({ nullable: false })
-  @IsDateString()
-  end: string;
+  @IsNumber()
+  @Min(5)
+  duration: number;
 
   @Field({ nullable: false })
   @IsNumber()
-  bpm: number;
+  bpm: number; //average
 }

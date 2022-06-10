@@ -10,6 +10,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Auth } from '../auth/models/auth.model';
 import { User } from '../user/models/user.model';
 import { Workout } from './models/workout.model';
+import { AwardService } from '../award/award.service';
+import { Award } from '../award/models/award.model';
 
 @Module({
   providers: [
@@ -19,9 +21,10 @@ import { Workout } from './models/workout.model';
     AuthService,
     JwtService,
     UserService,
+    AwardService
   ],
   imports: [
-    TypeOrmModule.forFeature([Auth, User, Workout]),
+    TypeOrmModule.forFeature([Auth, User, Workout, Award]),
     PassportModule,
     JwtModule.register({}),
   ],
