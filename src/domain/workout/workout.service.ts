@@ -25,8 +25,23 @@ export class WorkoutService {
     const qb = this.repo.createQueryBuilder('model');
     qb.leftJoinAndSelect('model.user', 'user');
     qb.leftJoinAndSelect('user.friends', 'friends');
-    qb.orWhere('user.id = :userId', { userId });
-    qb.orWhere('friends.id = :userId', { userId });
+    qb.where('user.id = :userId', { userId });
+
+    if (_query?.bpm) {
+      qb.where('model.bpm >= :bpm', { bpm: _query.bpm });
+    }
+
+    if (_query?.minCalories) {
+      qb.where('model.calories >= :minCalories', {
+        minCalories: _query.minCalories,
+      });
+    }
+
+    if (_query?.page) {
+      qb.take(_query.page.limit || 10).skip(
+        Math.max(_query.page.page - 1, 0) || 0,
+      );
+    }
     return qb.getMany();
   };
 

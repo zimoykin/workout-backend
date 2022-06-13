@@ -53,11 +53,22 @@ type ITokens {
 
 type Query {
   workout(id: String!): Workout!
-  workouts(bpm: Float, minCalories: Float): [Workout!]!
+  workouts(query: WOQuery): [Workout!]!
   workoutsUserId(id: String!): [Workout!]!
   user(id: String!): User!
   users(firstName: String, lastName: String): [User!]!
   awards(args: AwardArgs!): [Award!]!
+}
+
+input WOQuery {
+  bpm: Float
+  minCalories: Float
+  page: IPage
+}
+
+input IPage {
+  page: Float!
+  limit: Float!
 }
 
 input AwardArgs {

@@ -36,17 +36,14 @@ export class WorkoutResolver {
   @Query(() => [Model])
   workouts(
     @AuthUser() auth: IAuthorizedUser,
-    @Args() woArgs: WOQuery,
+    @Args('query', { nullable: true }) woArgs?: WOQuery,
   ): Promise<Model[]> {
     return this.woService.findAll(woArgs, auth.id);
   }
 
   @UseGuards(AuthGuard)
   @Query(() => [Model])
-  workoutsUserId(
-    @AuthUser() auth: IAuthorizedUser,
-    @Args('id') userId: string,
-  ): Promise<Model[]> {
+  workoutsUserId(@Args('id') userId: string): Promise<Model[]> {
     return this.woService.findAllByUserId(userId);
   }
 

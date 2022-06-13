@@ -40,9 +40,6 @@ export class AwardService {
   findByIds = async (...ids: string[]): Promise<Model[]> => {
     return this.repo.find({ where: { id: In(ids) } });
   };
-  findByUserId = async (...userId: string[]) => {
-    return this.repo.find({ where: { userId: In(userId) } });
-  };
   create = async (input: IAwardInput) => {
     const model = new Model();
     Object.assign(model, input);

@@ -16,15 +16,15 @@ async function bootstrap() {
     );
   });
 
-  // const options = new DocumentBuilder()
-  //   .setTitle('Workout')
-  //   .setDescription('The workout API description')
-  //   .setVersion('1.0')
-  //   .addTag('App')
-  //   .addBearerAuth()
-  //   .build();
-  // const document = SwaggerModule.createDocument(app, options);
-  // SwaggerModule.setup('api', app, document);
+  const options = new DocumentBuilder()
+    .setTitle('Workout')
+    .setDescription('The workout API description')
+    .setVersion('1.0')
+    .addTag('App')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('api', app, document);
 
   //start app
   await app.listen(8084);

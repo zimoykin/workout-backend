@@ -1,6 +1,7 @@
-import { ArgsType, Field } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
+import { IPage } from '../../../shared/dto/pagination.dto';
 
-@ArgsType()
+@InputType()
 export class WOQuery {
   @Field({ nullable: true })
   bpm?: number;
@@ -8,4 +9,6 @@ export class WOQuery {
   @Field({ nullable: true })
   minCalories?: number;
 
+  @Field({ nullable: true })
+  page?: IPage;
 }

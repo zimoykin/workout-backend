@@ -64,7 +64,7 @@ export class User extends Model {
   workouts: Workout[];
 
   @Field(() => [Award])
-  @OneToMany(() => Award, (_) => _.user)
+  @OneToMany(() => Award, (_) => _.user, { eager: true })
   awards: Award[];
 
   static fromInput(input: UserInput): User {

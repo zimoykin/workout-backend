@@ -81,15 +81,4 @@ export class UserResolver {
       .then(() => true)
       .catch(() => false);
   }
-
-  //
-
-  @ResolveField('awards', () => [Award])
-  getUser(
-    @Parent() user: User,
-    @Context('awardsLoader') awardsLoader: DataLoader<string, Award[]>,
-  ) {
-    const { id } = user;
-    return awardsLoader.load(id);
-  }
 }
