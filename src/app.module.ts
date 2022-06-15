@@ -22,6 +22,7 @@ import { User } from './domain/user/models/user.model';
 import { MysqlDatabaseProviderModule } from './database/database.provider';
 import { SeedService } from './seeding/seed.service';
 import { SeederModule } from './seeding/seed.module';
+import { InviteModule } from './domain/invite/invite.module';
 
 const imports = [
   ConfigModule.forRoot(),
@@ -49,6 +50,7 @@ const imports = [
     }),
   }),
   JwtModule,
+  TypeOrmModule.forFeature([Auth, User]),
 ];
 
 @Module({
@@ -59,7 +61,7 @@ const imports = [
     AwardModule,
     SeederModule,
     ...imports,
-    TypeOrmModule.forFeature([Auth, User]),
+    InviteModule,
   ],
   controllers: [AppController],
   providers: [AppService, AuthService, SeedService],

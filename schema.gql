@@ -28,6 +28,12 @@ type Award {
   user: User!
 }
 
+type Invite {
+  id: String!
+  invite: User!
+  requestedBy: User!
+}
+
 """user"""
 type User {
   id: String!
@@ -40,6 +46,8 @@ type User {
   createdAt: Date!
   updatedAt: Date!
   awards: [Award!]!
+  invites: [Invite!]!
+  request: [Invite!]!
 }
 
 type IStatusResponse {
@@ -49,6 +57,10 @@ type IStatusResponse {
 type ITokens {
   accessToken: String!
   refreshToken: String!
+}
+
+type Confirm {
+  status: String!
 }
 
 type Query {
@@ -91,6 +103,8 @@ type Mutation {
   removeFriend(userId: String!): User!
   updateUser(id: String!, userUpdate: UserUpdate!): User!
   removeUser(id: String!): Boolean!
+  invite(id: String!): Invite!
+  confirm(id: String!): Confirm!
 }
 
 input WorkoutInput {

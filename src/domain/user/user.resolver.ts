@@ -1,13 +1,5 @@
 import { NotFoundException, UseGuards } from '@nestjs/common';
-import {
-  Args,
-  Context,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { IAuthorizedUser } from '../../shared/dto/auth.interface';
 import { AuthGuard } from '../../shared/security/jwt.guard';
 import { AuthUser } from '../../shared/decorators/user.decorator';
@@ -15,8 +7,6 @@ import { AdminGuard } from '../../shared/security/admin.guard';
 import { UserUpdate } from './dto/update.dto';
 import { User } from './models/user.model';
 import { UserService } from './user.service';
-import { Award } from '../award/models/award.model';
-import DataLoader from 'dataloader';
 
 @Resolver(() => User)
 export class UserResolver {
