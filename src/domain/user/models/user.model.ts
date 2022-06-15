@@ -13,7 +13,7 @@ import {
 import { Model } from '../../../shared/mongo-database/model';
 import { UserRole } from '../../../shared/dto/userRole.dto';
 import { UserInput } from '../dto/input.dto';
-import { Award } from 'src/domain/award/models/award.model';
+import { Award } from '../../../domain/award/models/award.model';
 
 @ObjectType({ description: 'user' })
 @Entity('user')

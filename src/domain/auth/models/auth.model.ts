@@ -37,7 +37,7 @@ export class Auth extends Model {
   updatedAt: Date;
 
   @Field(() => User)
-  @OneToOne(() => User, (_) => _.id)
+  @OneToOne(() => User, (_) => _.id, { nullable: false })
   @JoinColumn()
   user: User;
 

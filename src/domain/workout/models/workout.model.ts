@@ -12,7 +12,7 @@ import {
   RelationId,
   UpdateDateColumn,
 } from 'typeorm';
-import { calculate } from 'src/shared/calculate';
+import { calculate } from '../../../shared/calculate';
 
 @ObjectType({ description: 'workout' })
 @Entity('workout')
