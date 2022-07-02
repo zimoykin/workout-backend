@@ -69,11 +69,11 @@ export class User extends Model {
   awards: Award[];
 
   @Field(() => [Invite])
-  @OneToMany(() => Invite, (_) => _.invite, { eager: true })
+  @OneToMany(() => Invite, (_) => _.to, { eager: true })
   invites: Invite[];
 
   @Field(() => [Invite])
-  @OneToMany(() => Invite, (_) => _.requestedBy, { eager: true })
+  @OneToMany(() => Invite, (_) => _.from, { eager: true })
   request: Invite[];
 
   static fromInput(input: UserInput): User {

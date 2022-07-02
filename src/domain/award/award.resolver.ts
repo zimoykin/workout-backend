@@ -36,7 +36,7 @@ export class AwardResolver {
     @Parent() award: Award,
     @Context('usersLoader') usersLoader: DataLoader<string, User>,
   ) {
-    const { user } = award;
-    return usersLoader.load(user.id);
+    const { userId } = award;
+    return usersLoader.load(userId);
   }
 }

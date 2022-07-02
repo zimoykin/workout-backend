@@ -30,8 +30,8 @@ type Award {
 
 type Invite {
   id: String!
-  invite: User!
-  requestedBy: User!
+  to: User!
+  from: User!
 }
 
 """user"""
